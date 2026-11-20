@@ -226,6 +226,7 @@ p { margin: 0 0 8px; }
 .activity time { color: var(--ink-3); font-size: 0.8rem; }
 
 /* ---------- النوافذ ---------- */
+[hidden] { display: none !important; } /* يتغلب على display:flex في .modal-backdrop */
 .modal-backdrop {
   position: fixed; inset: 0; z-index: 60;
   background: rgba(15, 30, 25, 0.5);
