@@ -9,7 +9,6 @@ const recentStore = 'sawt-alhara-recent';
 let creds = null; // { streetNumber, username }
 let poll = null;  // الاستطلاع الحالي من الخادم
 let currentView = 'dashboard';
-const charts = {};
 
 /* عنوان الخادم المشترك: نفس الأصل عند التشغيل من الخادم نفسه،
    وعنوان بعيد عندما تُنشر الواجهة على GitHub Pages أو تُفتح كملف */
@@ -237,9 +236,6 @@ function renderHeader() {
 }
 
 function renderDashboard() {
-  $('#dTotalVotes').textContent = poll.votes.length;
-  $('#dCandidatesCount').textContent = poll.candidates.length;
-  $('#dNamedVotes').textContent = poll.votes.filter((v) => v.personName).length;
 
   // بطاقات التصويت السريع
   const CAND_COLORS = ['#e11d48', '#2563eb', '#059669', '#d97706', '#7c3aed', '#0891b2', '#db2777', '#65a30d'];
@@ -266,6 +262,7 @@ function renderDashboard() {
         await api('vote', { candidateId: c.id });
         toast('تم تسجيل صوت لـ «' + c.name + '»', 'success');
         refreshCount();
+        renderStatsRanking(); // تحديث فوري للإحصائيات والترتيب بدون تحديث الصفحة
         btn.classList.remove('flash');
         void btn.offsetWidth; // إعادة تشغيل الأنيميشن
         btn.classList.add('flash');
@@ -288,7 +285,15 @@ function renderDashboard() {
   const last = poll.votes[poll.votes.length - 1];
   $('#btnUndoLast').hidden = !last;
 
-  // الترتيب
+  renderStatsRanking();
+}
+
+/* الإحصائيات + الترتيب — تُستدعى فورًا بعد كل صوت */
+function renderStatsRanking() {
+  $('#dTotalVotes').textContent = poll.votes.length;
+  $('#dCandidatesCount').textContent = poll.candidates.length;
+  $('#dNamedVotes').textContent = poll.votes.filter((v) => v.personName).length;
+
   const rank = $('#dRanking');
   rank.innerHTML = '';
   const ranked = poll.candidates.map((c) => ({ c, n: votesOf(c.id) })).sort((a, b) => b.n - a.n);
@@ -308,8 +313,6 @@ function renderDashboard() {
     p.textContent = 'أضف مرشحين لعرض الترتيب.';
     rank.appendChild(p);
   }
-
-  drawChart('dChart', ranked);
 }
 
 function renderCandidates() {
@@ -515,30 +518,6 @@ function renderResults() {
     body.appendChild(tr);
   });
   $('#rTotal').textContent = total;
-
-  drawChart('rChart', ranked);
-}
-
-function drawChart(canvasId, ranked) {
-  const canvas = document.getElementById(canvasId);
-  if (!canvas || typeof Chart === 'undefined') return;
-  if (charts[canvasId]) charts[canvasId].destroy();
-  charts[canvasId] = new Chart(canvas, {
-    type: 'bar',
-    data: {
-      labels: ranked.map((r) => r.c.name),
-      datasets: [{
-        label: 'عدد الأصوات',
-        data: ranked.map((r) => r.n),
-        backgroundColor: '#0e7a5f'
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } }
-    }
-  });
 }
 
 /* واتساب للنتائج */

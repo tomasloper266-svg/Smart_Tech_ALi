@@ -9,7 +9,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css?v=__VERSION__">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
@@ -51,8 +50,6 @@
     <!-- ====== شاشة الدخول ====== -->
     <section id="view-login" class="view">
       <div class="hero card">
-        <h1>سجّل الدخول وابدأ جمع الأصوات</h1>
-        <p class="muted">أدخل رقم الشارع واسم المستخدم. إذا كان الشارع جديدًا يُنشأ لك استطلاع فورًا، وإذا سبق أن دخلته من أي جهاز ستجد نفس البيانات والأصوات كما هي — وتقدر تشارك معلومات الدخول مع شخص ثاني ليكمّل معك على نفس الشارع.</p>
         <form id="loginForm" class="form-grid" autocomplete="off">
           <div class="field">
             <label for="fStreetNumber">رقم الشارع <span class="req">*</span></label>
@@ -64,7 +61,6 @@
           </div>
           <button class="btn btn-primary btn-lg" type="submit">دخول</button>
         </form>
-        <p class="muted small" style="margin-top:10px">بدون كلمة سر — أي شخص يصل إليه رقم الشارع واسم المستخدم يقدر يدخل ويصوّت. شارك المعلومات فقط مع من تثق به.</p>
       </div>
 
       <div id="recentLogins" class="existing-polls" hidden>
@@ -115,11 +111,6 @@
         <h3>الترتيب من الأعلى إلى الأقل</h3>
         <div id="dRanking" class="ranking"></div>
       </div>
-
-      <div class="card">
-        <h3>مقارنة الأصوات بين المرشحين</h3>
-        <div class="chart-wrap"><canvas id="dChart"></canvas></div>
-      </div>
     </section>
 
     <!-- ====== المرشحون ====== -->
@@ -158,7 +149,6 @@
       <div class="report card" id="reportCard">
         <h2 class="report-title">نتائج استطلاع آراء سكان الحارة</h2>
         <div class="report-meta" id="rMeta"></div>
-        <div class="chart-wrap"><canvas id="rChart"></canvas></div>
         <table class="table report-table">
           <thead><tr><th>المرشح</th><th>عدد الأصوات</th><th>النسبة المئوية</th></tr></thead>
           <tbody id="rBody"></tbody>
@@ -215,10 +205,6 @@
       </div>
     </section>
   </main>
-
-  <footer class="app-footer">
-    <p>«صوت الحارة» — استطلاع آراء غير رسمي حول المرشحين لمنصب المختار. النتائج تعبر فقط عن الأصوات التي سجلها جامع الاستطلاع، ولا يتضمن التطبيق تحققًا من الهوية أو سرية اقتراع.</p>
-  </footer>
 
   <!-- نافذة إضافة / تعديل مرشح -->
   <div class="modal-backdrop" id="candidateModal" hidden>

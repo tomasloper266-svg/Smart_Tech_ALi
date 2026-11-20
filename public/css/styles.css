@@ -318,18 +318,10 @@ p { margin: 0 0 8px; }
 .poll-card h3 { margin: 0; color: var(--primary-strong); }
 .poll-card .meta { color: var(--ink-2); font-size: 0.88rem; margin: 0; }
 
-/* ---------- التذييل ---------- */
-.app-footer { text-align: center; color: var(--ink-3); font-size: 0.8rem; padding: 20px 16px 30px; }
-.app-footer p { max-width: 720px; margin: 0 auto; }
-
-/* ---------- الرسوم البيانية ---------- */
-.chart-wrap { position: relative; height: 320px; }
-
 /* ---------- استجابة الشاشات ---------- */
 @media (max-width: 640px) {
   .stat-grid { grid-template-columns: 1fr; }
   .export-card .export-btns { grid-template-columns: 1fr; }
-  .chart-wrap { height: 260px; }
   .info-card .info-row { flex-direction: column; align-items: stretch; }
   .info-card .btn { width: 100%; }
   .candidate-grid { grid-template-columns: 1fr; }
