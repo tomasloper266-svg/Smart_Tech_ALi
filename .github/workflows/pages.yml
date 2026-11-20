@@ -25,6 +25,8 @@ jobs:
         uses: actions/checkout@v4
       - name: Configure Pages
         uses: actions/configure-pages@v5
+      - name: Cache-bust (استبدال __VERSION__ بمعرّف الالتزام)
+        run: sed -i "s/__VERSION__/${GITHUB_SHA::7}/g" public/index.html
       - name: Upload public/ (الواجهة) كـ artifact
         uses: actions/upload-pages-artifact@v3
         with:
