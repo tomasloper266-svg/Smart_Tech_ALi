@@ -182,8 +182,23 @@ function readBody(req) {
 
 function sendJson(res, code, obj) {
   const payload = JSON.stringify(obj);
-  res.writeHead(code, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
+  res.writeHead(code, {
+    'Content-Type': 'application/json; charset=utf-8',
+    'Cache-Control': 'no-store',
+    'Access-Control-Allow-Origin': '*'
+  });
   res.end(payload);
+}
+
+/* طلبات مسبقة من نطاق مختلف (مثل الواجهة على GitHub Pages) */
+function handleOptions(req, res) {
+  res.writeHead(204, {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Max-Age': '86400'
+  });
+  res.end();
 }
 
 function handleApi(req, res, pathname) {
@@ -231,6 +246,7 @@ function serveStatic(res, pathname) {
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, 'http://localhost');
   const pathname = decodeURIComponent(url.pathname);
+  if (req.method === 'OPTIONS') return handleOptions(req, res);
   if (pathname.startsWith('/api/')) return handleApi(req, res, pathname);
   serveStatic(res, pathname);
 });

@@ -11,6 +11,14 @@ let poll = null;  // الاستطلاع الحالي من الخادم
 let currentView = 'dashboard';
 const charts = {};
 
+/* عنوان الخادم المشترك: نفس الأصل عند التشغيل من الخادم نفسه،
+   وعنوان بعيد عندما تُنشر الواجهة على GitHub Pages أو تُفتح كملف */
+const API_BASE = (location.hostname.indexOf('github.io') !== -1 || location.protocol === 'file:')
+  ? 'https://0ym9ir41kl-8091.hosted.obvious.ai'
+  : '';
+/* الرابط الأساسي للتطبيق (المشترَك عبر واتساب) */
+const APP_LINK = 'https://tomasloper266-svg.github.io/Smart_Tech_ALi/';
+
 function clean(s, max) {
   return String(s == null ? '' : s).trim().replace(/\s+/g, ' ').slice(0, max || 100);
 }
@@ -27,7 +35,7 @@ async function api(route, extra) {
   const body = Object.assign({}, creds, extra || {});
   let res;
   try {
-    res = await fetch('/api/' + route, {
+    res = await fetch(API_BASE + '/api/' + route, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
@@ -201,7 +209,7 @@ function loginShareText() {
   return 'فوت معي على الشارع ' + poll.streetNumber + '\n' +
     'رقم الشارع: ' + poll.streetNumber + '\n' +
     'اسم المستخدم: ' + poll.username + '\n' +
-    'افتح التطبيق وسجّل الدخول بنفس المعلومات وستجد نفس الاستطلاع:\n' + location.origin;
+    'افتح التطبيق وسجّل الدخول بنفس المعلومات وستجد نفس الاستطلاع:\n' + APP_LINK;
 }
 function openLoginShare() {
   const url = 'https://wa.me/?text=' + encodeURIComponent(loginShareText());
