@@ -242,23 +242,40 @@ function renderDashboard() {
   $('#dNamedVotes').textContent = poll.votes.filter((v) => v.personName).length;
 
   // بطاقات التصويت السريع
+  const CAND_COLORS = ['#e11d48', '#2563eb', '#059669', '#d97706', '#7c3aed', '#0891b2', '#db2777', '#65a30d'];
   const grid = $('#voteGrid');
   grid.innerHTML = '';
-  poll.candidates.forEach((c) => {
+  const voteBtns = [];
+  poll.candidates.forEach((c, idx) => {
+    const color = CAND_COLORS[idx % CAND_COLORS.length];
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'btn btn-vote';
-    btn.innerHTML = '<span class="vote-name"></span><span class="vote-count"></span>';
+    btn.style.setProperty('--cand', color);
+    btn.style.setProperty('--cand-soft', color + '1f');
+    btn.style.setProperty('--cand-border', color + '59');
+    btn.innerHTML = '<span class="vote-avatar"></span><span class="vote-name"></span><span class="vote-count"></span>';
+    btn.querySelector('.vote-avatar').textContent = (c.name || '?').trim().charAt(0);
     btn.querySelector('.vote-name').textContent = c.name;
-    btn.querySelector('.vote-count').textContent = votesOf(c.id) + ' صوت';
+    const countEl = btn.querySelector('.vote-count');
+    const refreshCount = () => { countEl.textContent = votesOf(c.id) + ' صوت'; };
+    refreshCount();
     btn.addEventListener('click', async () => {
       btn.disabled = true;
       try {
         await api('vote', { candidateId: c.id });
         toast('تم تسجيل صوت لـ «' + c.name + '»', 'success');
+        refreshCount();
+        btn.classList.remove('flash');
+        void btn.offsetWidth; // إعادة تشغيل الأنيميشن
+        btn.classList.add('flash');
+        // إنزال الشاشة على المرشح التالي حتى يتنقل بين الأزرار بسهولة
+        const next = voteBtns[(idx + 1) % voteBtns.length];
+        if (next && next !== btn) next.scrollIntoView({ behavior: 'smooth', block: 'center' });
       } finally { btn.disabled = false; }
     });
     grid.appendChild(btn);
+    voteBtns.push(btn);
   });
   if (!poll.candidates.length) {
     const p = document.createElement('p');

@@ -255,19 +255,43 @@ p { margin: 0 0 8px; }
 
 /* ---------- التصويت السريع ---------- */
 .vote-quick-card .info-row { margin-bottom: 12px; }
+/* الألوان تُمرَّر لكل مرشح من JS: --cand (أساسي)، --cand-soft (خلفية شفافة)، --cand-border */
 .btn-vote {
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
-  background: var(--surface); border: 2px solid var(--primary-soft);
-  color: var(--ink); padding: 18px 12px; border-radius: var(--radius);
-  box-shadow: var(--shadow); cursor: pointer; text-align: center;
-  transition: transform var(--transition), border-color var(--transition), background var(--transition);
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  background: linear-gradient(180deg, var(--cand-soft, var(--primary-soft)) 0%, var(--surface) 55%);
+  border: 2px solid var(--cand-border, var(--primary-soft));
+  border-radius: var(--radius-lg, var(--radius));
+  color: var(--ink); padding: 18px 12px 14px;
+  box-shadow: var(--shadow); cursor: pointer; text-align: center; overflow: hidden;
+  transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
   font: inherit;
 }
-.btn-vote:hover { transform: translateY(-2px); border-color: var(--primary); }
-.btn-vote:active { transform: scale(0.97); background: var(--primary-soft); }
+.btn-vote::before {
+  content: ''; position: absolute; inset: 0 0 auto 0; height: 5px;
+  background: var(--cand, var(--primary));
+}
+.btn-vote:hover { transform: translateY(-2px); box-shadow: 0 6px 18px var(--cand-soft, var(--primary-soft)); }
+.btn-vote:active { transform: scale(0.96); }
 .btn-vote:disabled { opacity: 0.6; cursor: wait; }
-.btn-vote .vote-name { font-weight: 800; font-size: 1.05rem; color: var(--primary-strong); }
-.btn-vote .vote-count { font-size: 0.85rem; color: var(--ink-2); }
+.btn-vote.flash { animation: vote-flash 0.7s ease-out; }
+@keyframes vote-flash {
+  0% { box-shadow: 0 0 0 0 var(--cand-soft, var(--primary-soft)); transform: scale(1.03); }
+  60% { box-shadow: 0 0 0 12px transparent; }
+  100% { transform: scale(1); }
+}
+.vote-avatar {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: var(--cand, var(--primary)); color: #fff;
+  font-weight: 900; font-size: 1.5rem; line-height: 1;
+  display: grid; place-items: center;
+  box-shadow: 0 2px 8px var(--cand-soft, var(--primary-soft));
+}
+.btn-vote .vote-name { font-weight: 800; font-size: 1.1rem; color: var(--ink); }
+.btn-vote .vote-count {
+  font-size: 0.8rem; font-weight: 700; color: var(--cand, var(--primary));
+  background: var(--cand-soft, var(--primary-soft));
+  padding: 3px 14px; border-radius: 999px;
+}
 
 /* ---------- التنبيهات ---------- */
 .toasts {
