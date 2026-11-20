@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>صوت الحارة — استطلاعات آراء سكان الحارة</title>
+  <meta name="description" content="تطبيق لجمع استطلاعات آراء سكان الحارة حول المرشحين لمنصب المختار">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- الترويسة -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">ص</span>
+        <div class="brand-text">
+          <strong>صوت الحارة</strong>
+          <span>استطلاعات آراء السكان</span>
+        </div>
+      </div>
+      <div class="poll-switcher" id="pollSwitcherWrap" hidden>
+        <label class="switcher-label" for="pollSwitcher">الاستطلاع الحالي</label>
+        <div class="switcher-row">
+          <select id="pollSwitcher" class="input"></select>
+          <button class="btn btn-primary" id="btnNewPollTop" type="button">استطلاع جديد</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- التبويبات -->
+  <nav class="tabs" id="mainTabs" hidden>
+    <button class="tab active" data-view="dashboard" type="button">لوحة التحكم</button>
+    <button class="tab" data-view="candidates" type="button">المرشحون</button>
+    <button class="tab" data-view="voters" type="button">سجل المصوتين</button>
+    <button class="tab" data-view="results" type="button">النتائج والتصدير</button>
+    <button class="tab" data-view="manage" type="button">إدارة الاستطلاع</button>
+  </nav>
+
+  <main class="container">
+
+    <!-- ====== شاشة البداية: إنشاء / فتح استطلاع ====== -->
+    <section id="view-start" class="view" hidden>
+      <div class="hero card">
+        <h1>أنشئ استطلاعك وابدأ جمع الأصوات</h1>
+        <p class="muted">لكل جامع أصوات استطلاع مستقل ببياناته ونتائجه الخاصة — كل استطلاع يُحفظ على هذا الجهاز فقط.</p>
+        <form id="createPollForm" class="form-grid" autocomplete="off">
+          <div class="field">
+            <label for="fStreetName">اسم الشارع <span class="req">*</span></label>
+            <input class="input" id="fStreetName" maxlength="100" placeholder="مثال: شارع الثورة" required>
+          </div>
+          <div class="field">
+            <label for="fStreetNumber">رقم الشارع</label>
+            <input class="input" id="fStreetNumber" maxlength="20" placeholder="مثال: 5">
+          </div>
+          <div class="field">
+            <label for="fCollector">اسم جامع الأصوات (اختياري)</label>
+            <input class="input" id="fCollector" maxlength="60" placeholder="مثال: أحمد">
+          </div>
+          <button class="btn btn-primary btn-lg" type="submit">إنشاء الاستطلاع</button>
+        </form>
+      </div>
+
+      <div id="existingPolls" class="existing-polls" hidden>
+        <h2>استطلاعاتك المحفوظة على هذا الجهاز</h2>
+        <div class="poll-cards" id="pollCards"></div>
+      </div>
+    </section>
+
+    <!-- ====== لوحة التحكم ====== -->
+    <section id="view-dashboard" class="view" hidden>
+      <div class="card info-card">
+        <div class="info-row">
+          <div class="info-main">
+            <h2 id="dStreetName" class="street-title"></h2>
+            <p class="muted" id="dStreetMeta"></p>
+          </div>
+          <button class="btn btn-secondary" id="btnEditPollInfo" type="button">تعديل بيانات الشارع</button>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="card stat-card">
+          <span class="stat-value" id="dTotalVotes">0</span>
+          <span class="stat-label">إجمالي الأصوات المسجلة</span>
+        </div>
+        <div class="card stat-card">
+          <span class="stat-value" id="dCandidatesCount">0</span>
+          <span class="stat-label">عدد المرشحين</span>
+        </div>
+        <div class="card stat-card">
+          <span class="stat-value" id="dNamedVotes">0</span>
+          <span class="stat-label">أصوات بأسماء مسجلة</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>الترتيب من الأعلى إلى الأقل</h3>
+        <div id="dRanking" class="ranking"></div>
+      </div>
+
+      <div class="card">
+        <h3>مقارنة الأصوات بين المرشحين</h3>
+        <div class="chart-wrap"><canvas id="dChart"></canvas></div>
+      </div>
+    </section>
+
+    <!-- ====== المرشحون ====== -->
+    <section id="view-candidates" class="view" hidden>
+      <div class="section-head">
+        <h2>إدارة المرشحين</h2>
+        <button class="btn btn-primary" id="btnAddCandidate" type="button">+ إضافة مرشح</button>
+      </div>
+      <div class="candidate-grid" id="candidateGrid"></div>
+    </section>
+
+    <!-- ====== سجل المصوتين ====== -->
+    <section id="view-voters" class="view" hidden>
+      <div class="section-head">
+        <h2>سجل الأشخاص المصوتين</h2>
+        <span class="pill" id="vTotalNames">0 اسم مسجل</span>
+      </div>
+      <p class="muted small">هذا القسم ضمن إدارة الاستطلاع فقط، ولا يظهر في صفحة النتائج العامة.</p>
+      <div class="field">
+        <label class="sr-only" for="vSearch">بحث</label>
+        <input class="input" id="vSearch" placeholder="ابحث باسم شخص…" autocomplete="off">
+      </div>
+      <div class="card table-card">
+        <table class="table">
+          <thead>
+            <tr><th>اسم الشخص</th><th>المرشح</th><th>التاريخ والوقت</th><th></th></tr>
+          </thead>
+          <tbody id="votersBody"></tbody>
+        </table>
+        <div class="empty-note" id="votersEmpty" hidden>لا توجد أسماء مسجلة بعد.</div>
+      </div>
+    </section>
+
+    <!-- ====== النتائج والتصدير ====== -->
+    <section id="view-results" class="view" hidden>
+      <div class="report card" id="reportCard">
+        <h2 class="report-title">نتائج استطلاع آراء سكان الحارة</h2>
+        <div class="report-meta" id="rMeta"></div>
+        <div class="chart-wrap"><canvas id="rChart"></canvas></div>
+        <table class="table report-table">
+          <thead><tr><th>المرشح</th><th>عدد الأصوات</th><th>النسبة المئوية</th></tr></thead>
+          <tbody id="rBody"></tbody>
+          <tfoot><tr><td>الإجمالي</td><td id="rTotal">0</td><td>100%</td></tr></tfoot>
+        </table>
+        <p class="disclaimer">ملاحظة: هذه النتائج تعبر فقط عن الأصوات التي سجلها جامع الاستطلاع، وليست اقتراعًا انتخابيًا رسميًا.</p>
+      </div>
+
+      <div class="card export-card">
+        <h3>تصدير ومشاركة النتائج</h3>
+        <div class="export-btns">
+          <button class="btn btn-primary btn-lg" id="btnExportPdf" type="button">تصدير PDF</button>
+          <button class="btn btn-secondary btn-lg" id="btnExportExcel" type="button">تصدير Excel</button>
+          <button class="btn btn-whatsapp btn-lg" id="btnShareWhatsapp" type="button">مشاركة النتائج عبر واتساب</button>
+        </div>
+        <p class="muted small" id="whatsappHint" hidden>إن تعذّر إرفاق الملف مباشرة عبر رابط واتساب: نزّل ملف PDF أولاً من زر «تصدير PDF» ثم افتح واتساب وأرفقه من واجهة المشاركة في هاتفك.</p>
+      </div>
+    </section>
+
+    <!-- ====== إدارة الاستطلاع ====== -->
+    <section id="view-manage" class="view" hidden>
+      <div class="card">
+        <h3>تعديل بيانات الاستطلاع</h3>
+        <form id="editPollForm" class="form-grid" autocomplete="off">
+          <div class="field">
+            <label for="eStreetName">اسم الشارع <span class="req">*</span></label>
+            <input class="input" id="eStreetName" maxlength="100" required>
+          </div>
+          <div class="field">
+            <label for="eStreetNumber">رقم الشارع</label>
+            <input class="input" id="eStreetNumber" maxlength="20">
+          </div>
+          <div class="field">
+            <label for="eCollector">اسم جامع الأصوات</label>
+            <input class="input" id="eCollector" maxlength="60">
+          </div>
+          <button class="btn btn-primary" type="submit">حفظ التعديلات</button>
+        </form>
+        <p class="muted small">تاريخ إنشاء الاستطلاع: <span id="mCreatedAt"></span> (يُسجل تلقائيًا ولا يُعدل).</p>
+      </div>
+
+      <div class="card">
+        <h3>النسخ الاحتياطي</h3>
+        <p class="muted small">يُحفظ كل شيء تلقائيًا على هذا الجهاز بعد كل عملية. البيانات لا تُزامَن بين الأجهزة — استخدم النسخة الاحتياطية لنقلها.</p>
+        <div class="export-btns">
+          <button class="btn btn-secondary" id="btnExportJson" type="button">تصدير نسخة احتياطية (JSON)</button>
+          <label class="btn btn-secondary" for="importJsonInput">استيراد نسخة احتياطية</label>
+          <input type="file" id="importJsonInput" accept=".json,application/json" hidden>
+        </div>
+      </div>
+
+      <div class="card danger-card">
+        <h3>عمليات حساسة</h3>
+        <div class="export-btns">
+          <button class="btn btn-warning" id="btnResetVotes" type="button">تصفير الأصوات</button>
+          <button class="btn btn-danger" id="btnDeletePoll" type="button">حذف الاستطلاع بالكامل</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>سجل النشاط</h3>
+        <ul class="activity" id="activityList"></ul>
+        <div class="empty-note" id="activityEmpty" hidden>لا توجد عمليات مسجلة بعد.</div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>«صوت الحارة» — استطلاع آراء غير رسمي حول المرشحين لمنصب المختار. النتائج تعبر فقط عن الأصوات التي سجلها جامع الاستطلاع، ولا يتضمن التطبيق تحققًا من الهوية أو سرية اقتراع.</p>
+  </footer>
+
+  <!-- نافذة تسجيل صوت -->
+  <div class="modal-backdrop" id="voteModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="vmTitle">
+      <h3 id="vmTitle">تسجيل صوت</h3>
+      <p class="vote-candidate">المرشح: <strong id="vmCandidate"></strong></p>
+      <div class="field">
+        <label for="vmPerson">اسم الشخص الذي أدلى بصوته (اختياري)</label>
+        <input class="input" id="vmPerson" maxlength="80" placeholder="اتركه فارغًا إذا لم ترد بإدخال الاسم" autocomplete="off">
+      </div>
+      <p class="muted small" id="vmDupHint" hidden></p>
+      <div class="modal-actions">
+        <button class="btn btn-primary btn-lg" id="vmConfirm" type="button">تأكيد تسجيل الصوت</button>
+        <button class="btn btn-ghost" data-close type="button">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- نافذة إضافة / تعديل مرشح -->
+  <div class="modal-backdrop" id="candidateModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="cmTitle">
+      <h3 id="cmTitle">إضافة مرشح</h3>
+      <div class="field">
+        <label for="cmName">اسم المرشح <span class="req">*</span></label>
+        <input class="input" id="cmName" maxlength="60" placeholder="اسم المرشح" autocomplete="off">
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="cmSave" type="button">حفظ</button>
+        <button class="btn btn-ghost" data-close type="button">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- نافذة تعديل تسجيل صوت -->
+  <div class="modal-backdrop" id="voterEditModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="vemTitle">
+      <h3 id="vemTitle">تعديل بيانات تسجيل الصوت</h3>
+      <div class="field">
+        <label for="vemPerson">اسم الشخص</label>
+        <input class="input" id="vemPerson" maxlength="80" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="vemCandidate">المرشح</label>
+        <select class="input" id="vemCandidate"></select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="vemSave" type="button">حفظ التعديل</button>
+        <button class="btn btn-ghost" data-close type="button">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- نافذة تأكيد عامة -->
+  <div class="modal-backdrop" id="confirmModal" hidden>
+    <div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="cfTitle">
+      <h3 id="cfTitle"></h3>
+      <p id="cfMessage"></p>
+      <div class="modal-actions">
+        <button class="btn btn-danger" id="cfConfirm" type="button">تأكيد</button>
+        <button class="btn btn-ghost" data-close type="button">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

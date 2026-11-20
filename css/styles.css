@@ -1,0 +1,286 @@
+/* صوت الحارة — أنماط التطبيق (RTL) */
+:root {
+  --bg: #f3f6f4;
+  --surface: #ffffff;
+  --surface-2: #eef4f0;
+  --primary: #0e7a5f;
+  --primary-strong: #0b5f4a;
+  --primary-soft: #dff1ea;
+  --accent: #f2b722;
+  --ink: #1c2b26;
+  --ink-2: #4f625b;
+  --ink-3: #7d8f88;
+  --danger: #c6423b;
+  --danger-soft: #fbe9e8;
+  --warning: #a86b0f;
+  --warning-soft: #fdf3df;
+  --whatsapp: #1faa53;
+  --border: #dfe8e3;
+  --radius: 14px;
+  --radius-sm: 10px;
+  --shadow: 0 6px 18px rgba(16, 50, 40, 0.08), 0 1px 3px rgba(16, 50, 40, 0.06);
+  --transition: 160ms ease;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: 'Tajawal', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+h1, h2, h3 { margin: 0 0 8px; line-height: 1.35; }
+h1 { font-size: 1.5rem; }
+h2 { font-size: 1.25rem; }
+h3 { font-size: 1.1rem; }
+p { margin: 0 0 8px; }
+
+.muted { color: var(--ink-2); }
+.small { font-size: 0.85rem; }
+.req { color: var(--danger); }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+.container { max-width: 980px; margin: 0 auto; padding: 16px 16px 40px; }
+
+/* ---------- الترويسة ---------- */
+.app-header {
+  background: linear-gradient(135deg, var(--primary-strong), var(--primary));
+  color: #fff;
+  box-shadow: var(--shadow);
+}
+.header-inner {
+  max-width: 980px; margin: 0 auto; padding: 12px 16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+}
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-mark {
+  width: 44px; height: 44px; border-radius: 12px; flex: none;
+  background: rgba(255, 255, 255, 0.16);
+  display: grid; place-items: center;
+  font-size: 1.4rem; font-weight: 900;
+}
+.brand-text { display: flex; flex-direction: column; line-height: 1.3; }
+.brand-text strong { font-size: 1.15rem; font-weight: 800; }
+.brand-text span { font-size: 0.8rem; opacity: 0.85; }
+
+.poll-switcher { display: flex; flex-direction: column; gap: 4px; min-width: 240px; }
+.switcher-label { font-size: 0.75rem; opacity: 0.85; }
+.switcher-row { display: flex; gap: 8px; }
+.switcher-row select { flex: 1; min-width: 0; }
+
+/* ---------- التبويبات ---------- */
+.tabs {
+  max-width: 980px; margin: 12px auto 0; padding: 0 16px;
+  display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  border: none; cursor: pointer; white-space: nowrap;
+  background: transparent; color: var(--ink-2);
+  font: inherit; font-weight: 700;
+  padding: 10px 16px; border-radius: 999px;
+  transition: background var(--transition), color var(--transition);
+}
+.tab:hover { background: var(--surface-2); }
+.tab.active { background: var(--primary); color: #fff; }
+
+/* ---------- البطاقات ---------- */
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 18px;
+  margin-bottom: 16px;
+}
+
+.hero { text-align: center; padding: 28px 20px; }
+.hero h1 { font-size: 1.6rem; font-weight: 900; color: var(--primary-strong); }
+.hero p { max-width: 560px; margin: 0 auto 16px; }
+
+/* ---------- النماذج ---------- */
+.form-grid { display: flex; flex-direction: column; gap: 12px; max-width: 480px; margin: 0 auto; text-align: right; }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field label { font-size: 0.88rem; font-weight: 700; color: var(--ink-2); }
+.input {
+  font: inherit; color: var(--ink);
+  background: #fff; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  padding: 10px 12px; min-height: 44px;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.input:focus {
+  outline: none; border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+/* ---------- الأزرار ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  font: inherit; font-weight: 700; cursor: pointer;
+  border: none; border-radius: var(--radius-sm);
+  padding: 9px 16px; min-height: 44px;
+  transition: transform var(--transition), background var(--transition), opacity var(--transition);
+}
+.btn:active { transform: scale(0.97); }
+.btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.btn-lg { padding: 13px 22px; font-size: 1.05rem; min-height: 52px; width: 100%; }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-strong); }
+.btn-secondary { background: var(--primary-soft); color: var(--primary-strong); }
+.btn-secondary:hover { background: #cde9df; }
+.btn-ghost { background: transparent; color: var(--ink-2); }
+.btn-ghost:hover { background: var(--surface-2); }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-danger:hover { background: #a8352f; }
+.btn-warning { background: var(--warning); color: #fff; }
+.btn-warning:hover { background: #8a5709; }
+.btn-whatsapp { background: var(--whatsapp); color: #fff; }
+.btn-whatsapp:hover { background: #178f45; }
+.btn-icon {
+  min-height: 36px; padding: 6px 10px; font-size: 0.85rem;
+  background: var(--surface-2); color: var(--ink-2);
+}
+.btn-icon:hover { background: #e2e9e5; }
+.btn-icon.danger { color: var(--danger); background: var(--danger-soft); }
+
+/* ---------- الإحصائيات ---------- */
+.info-card .info-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.street-title { color: var(--primary-strong); font-weight: 900; font-size: 1.35rem; }
+.info-main p { margin: 0; }
+
+.stat-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px;
+}
+.stat-card { text-align: center; padding: 16px 10px; margin-bottom: 0; }
+.stat-value { display: block; font-size: 2.1rem; font-weight: 900; color: var(--primary-strong); line-height: 1.2; }
+.stat-label { color: var(--ink-2); font-size: 0.88rem; font-weight: 500; }
+
+/* ---------- الترتيب ---------- */
+.ranking { display: flex; flex-direction: column; gap: 12px; }
+.rank-row { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; }
+.rank-name { font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.rank-medal {
+  width: 26px; height: 26px; border-radius: 50%; flex: none;
+  background: var(--surface-2); color: var(--ink-2);
+  display: grid; place-items: center; font-size: 0.85rem; font-weight: 900;
+}
+.rank-row:first-child .rank-medal { background: var(--accent); color: #5b4203; }
+.rank-votes { font-weight: 900; color: var(--primary-strong); white-space: nowrap; }
+.rank-bar { grid-column: 1 / -1; height: 10px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+.rank-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #3aa98a); border-radius: 999px; transition: width 300ms ease; }
+.rank-pct { color: var(--ink-3); font-size: 0.82rem; }
+
+/* ---------- المرشحون ---------- */
+.section-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 4px 0 14px; flex-wrap: wrap; }
+.candidate-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; }
+.candidate-card { text-align: center; margin-bottom: 0; display: flex; flex-direction: column; gap: 10px; }
+.candidate-top { display: flex; justify-content: space-between; align-items: flex-start; }
+.candidate-name { font-weight: 800; font-size: 1.1rem; text-align: right; flex: 1; margin: 0; }
+.candidate-actions { display: flex; gap: 6px; }
+.candidate-count { font-size: 2.6rem; font-weight: 900; color: var(--primary-strong); line-height: 1.1; }
+.candidate-count-label { color: var(--ink-3); font-size: 0.85rem; margin-top: -6px; }
+
+/* ---------- الجداول ---------- */
+.table-card { padding: 8px 12px; overflow-x: auto; }
+.table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+.table th, .table td { padding: 10px 10px; text-align: right; border-bottom: 1px solid var(--border); }
+.table thead th { color: var(--ink-3); font-size: 0.8rem; font-weight: 700; }
+.table tbody tr:hover { background: var(--surface-2); }
+.table tfoot td { font-weight: 900; color: var(--primary-strong); border-bottom: none; }
+.table .actions-cell { white-space: nowrap; display: flex; gap: 6px; }
+
+.empty-note { text-align: center; color: var(--ink-3); padding: 24px 8px; }
+
+/* ---------- التقرير ---------- */
+.report { border-top: 6px solid var(--primary); }
+.report-title { text-align: center; color: var(--primary-strong); font-weight: 900; font-size: 1.35rem; }
+.report-meta {
+  display: flex; flex-wrap: wrap; gap: 6px 20px; justify-content: center;
+  background: var(--surface-2); border-radius: var(--radius-sm);
+  padding: 10px 14px; margin-bottom: 14px; font-size: 0.92rem;
+}
+.report-meta strong { color: var(--primary-strong); }
+.disclaimer { color: var(--ink-3); font-size: 0.8rem; text-align: center; margin: 14px 0 0; border-top: 1px dashed var(--border); padding-top: 10px; }
+
+.export-card .export-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+
+/* ---------- سجل النشاط ---------- */
+.activity { list-style: none; margin: 0; padding: 0; max-height: 420px; overflow-y: auto; }
+.activity li {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 10px 4px; border-bottom: 1px solid var(--border); font-size: 0.92rem;
+}
+.activity li:last-child { border-bottom: none; }
+.activity .act-type { font-weight: 800; }
+.activity .act-type.add { color: var(--primary-strong); }
+.activity .act-type.warn { color: var(--warning); }
+.activity .act-type.bad { color: var(--danger); }
+.activity time { color: var(--ink-3); font-size: 0.8rem; }
+
+/* ---------- النوافذ ---------- */
+.modal-backdrop {
+  position: fixed; inset: 0; z-index: 60;
+  background: rgba(15, 30, 25, 0.5);
+  display: flex; align-items: center; justify-content: center; padding: 16px;
+}
+.modal {
+  background: var(--surface); border-radius: var(--radius);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  width: 100%; max-width: 420px; padding: 20px;
+  animation: pop 160ms ease;
+}
+@keyframes pop { from { transform: translateY(12px) scale(0.98); opacity: 0; } to { transform: none; opacity: 1; } }
+.modal-actions { display: flex; gap: 10px; margin-top: 16px; }
+.modal-actions .btn-primary { flex: 1; }
+.vote-candidate { background: var(--primary-soft); border-radius: var(--radius-sm); padding: 10px 14px; color: var(--primary-strong); font-weight: 700; }
+
+/* ---------- التنبيهات ---------- */
+.toasts {
+  position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; gap: 8px; z-index: 80; width: min(92vw, 420px);
+}
+.toast {
+  background: var(--ink); color: #fff; border-radius: var(--radius-sm);
+  padding: 12px 16px; box-shadow: var(--shadow);
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  animation: pop 160ms ease; font-weight: 500;
+}
+.toast.success { background: var(--primary-strong); }
+.toast.error { background: var(--danger); }
+.toast .btn-undo {
+  background: rgba(255, 255, 255, 0.18); color: #fff;
+  border-radius: 8px; padding: 6px 12px; min-height: 0; font-size: 0.85rem;
+}
+
+/* ---------- شاشة البداية: الاستطلاعات المحفوظة ---------- */
+.existing-polls { margin-top: 24px; }
+.poll-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+.poll-card { margin-bottom: 0; display: flex; flex-direction: column; gap: 10px; }
+.poll-card h3 { margin: 0; color: var(--primary-strong); }
+.poll-card .meta { color: var(--ink-2); font-size: 0.88rem; margin: 0; }
+
+/* ---------- التذييل ---------- */
+.app-footer { text-align: center; color: var(--ink-3); font-size: 0.8rem; padding: 20px 16px 30px; }
+.app-footer p { max-width: 720px; margin: 0 auto; }
+
+/* ---------- الرسوم البيانية ---------- */
+.chart-wrap { position: relative; height: 320px; }
+
+/* ---------- استجابة الشاشات ---------- */
+@media (max-width: 640px) {
+  .stat-grid { grid-template-columns: 1fr; }
+  .export-card .export-btns { grid-template-columns: 1fr; }
+  .chart-wrap { height: 260px; }
+  .info-card .info-row { flex-direction: column; align-items: stretch; }
+  .info-card .btn { width: 100%; }
+  .candidate-grid { grid-template-columns: 1fr; }
+  .table th:nth-child(3), .table td:nth-child(3) { min-width: 130px; }
+}
